@@ -13,15 +13,8 @@ workflows:
     build:
       ios:
         build_mode: release  # Build in release mode
-        target: lib/main.dart  # Main entry file
-
-    # Signing for iOS build (you will need to upload the necessary certificates)
-    # Codemagic allows you to set signing credentials in the build settings on the Codemagic UI
-    # for security, avoid hardcoding them in the yaml file.
-    # However, you can set `auto_code_signing: true` for automatic signing
+        target: lib/main.dart  # Main entry Dart file
 
     artifacts:
       - build/ios/iphoneos/*.ipa  # Upload the IPA file after the build
 
-    # If you need to upload the .ipa to the app store, you can enable the following
-    # upload_to_app_store: true
