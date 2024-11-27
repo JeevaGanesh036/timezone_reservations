@@ -1,52 +1,27 @@
 workflows:
   ios:
-    name: Build and Test iOS App
-    max_build_duration: 60 # Maximum time for a build (in minutes)
-    
-    # Configure the CI environment
-    environment:
-      vars:
-        FLUTTER_VERSION: stable
-      flutter: # Use the official Flutter SDK
-        version: $FLUTTER_VERSION
-    
-    # Define the build steps
-    scripts:
-      - flutter doctor
-      - flutter pub get # Install dependencies
+    name: Build iOS App
+    max_build_duration: 60 # Max duration for the build (in minutes)
 
-    # Build for iOS
+    environment:
+      flutter: stable  # Use the stable Flutter channel
+
+    scripts:
+      - flutter doctor  # Check Flutter setup
+      - flutter pub get  # Install dependencies
+
     build:
       ios:
-        # Run the Flutter build for iOS in release mode
-        flutter:
-          target: lib/main.dart # Ensure that this points to the correct entry file
-          build_mode: release # Build mode (debug, release, profile)
-        xcode:
-          # Specify the iOS version you want to build for
-          workspace: ios/Runner.xcworkspace
-          scheme: Runner
+        build_mode: release  # Build in release mode
+        target: lib/main.dart  # Main entry file
 
-    # Optionally, you can upload the .ipa to Codemagic's artifact storage
+    # Signing for iOS build (you will need to upload the necessary certificates)
+    # Codemagic allows you to set signing credentials in the build settings on the Codemagic UI
+    # for security, avoid hardcoding them in the yaml file.
+    # However, you can set `auto_code_signing: true` for automatic signing
+
     artifacts:
-      - build/ios/iphoneos/*.ipa # Upload the .ipa file from the build process
+      - build/ios/iphoneos/*.ipa  # Upload the IPA file after the build
 
-    # If you have any tests, you can run them here (optional)
-    testing:
-      ios:
-        scripts:
-          - flutter test
-
-    # Specify the signing method for iOS (for release builds)
-    # You will need to provide your iOS signing credentials (Provisioning Profiles, Certificates)
-    # The easiest way to do this is by using Codemagic's Secrets for sensitive keys
-    signing:
-      ios:
-        method: manual # or 'automatic'
-        identity: "iOS Distribution" # Name of the distribution certificate
-        provisioning_profile_path: "ios/Runner/Runner.mobileprovision" # Path to your provisioning profile
-        distribution_certificate_path: "ios/Runner/Certificates/iOS_Distribution.cer" # Path to your certificate
-
-    # Optional: specify the platform version (e.g., macOS, Android, iOS)
-    platform:
-      ios: 12.0 # Specify the minimum iOS version for the build
+    # If you need to upload the .ipa to the app store, you can enable the following
+    # upload_to_app_store: true
